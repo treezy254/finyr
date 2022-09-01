@@ -1,0 +1,32 @@
+* {
+    box-sizing: border-box;
+  }
+
+  .cursor {
+    border-radius: 50%;
+    background: blue;
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .click {
+    border-radius: 50%;
+    background: blue;
+    position: fixed;
+    width: 20px;
+    height: 20px;
+  }
+
+  .clicked {
+    border: 2px solid blue;
+  }
+
+  .circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: crimson;
+  }
