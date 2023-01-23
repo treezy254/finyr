@@ -20,13 +20,11 @@
     height: 20px;
   }
 
-  .clicked {
-    border: 2px solid blue;
-  }
+body{
+  background-color: #C3C3C3;
+}
 
-  .circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: crimson;
-  }
+#tarea{
+  width: 500px;
+  height: 300px;
+}

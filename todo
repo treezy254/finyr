@@ -1,0 +1,30 @@
+--- most of these are actions to be done on the Iframe
+
+Dont record the record controls ---- Its not a bug, its a feature
+dont record the mouse but record the cursor ---+
+Add a timeline to the recording with some video controls
+	map:- time = event
+
+:: Each event is mapped with a time stamp
+What I need is to be able to spread the values of the seek in accodance to the cast time
+Then, sync the cast as in, when a move the seek button, the cast will adjust to the current events
+
+On screencast click, pause
+On screencast edit, save edits as cache or something -
+on play, continue screencast 
+------------------
+
+what I want from it
+----
+
+To be pausable when iframe clicked ---+
+To continue at the same same spot, with the same speed when play  ---+
+The seek button to be synchronized with the screencast -
+Don terminate iframe after play ---+
+
+
+--- 
+
+new
+---
+if possible fix, stop play and detach functions

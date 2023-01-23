@@ -1,56 +1,55 @@
-import $ from "./jquery";
-
-/*
-## Demo usage
-- Try pressing record, clicking around, press record again and then click play. 
-- Play creates an `<iframe>`, injects the original HTML and replays the user events. 
-- To change zoom change the `REPLAY_SCALE` variable in the source code. 
-- To change the playback speed change the `SPEED` variable in the source code.
-- NB I only tested the jsbin on chrome 56.
-*/
+import $ from "./jquery.js";
 
 console.log("load");
-
 console.log("loaded");
+
 $(function() {
   // config
-  const REPLAY_SCALE = 0.631;
-  const SPEED = 1;
+  const REPLAY_SCALE = 1;
+  let SPEED = 1;
+
+  const $area = $('#area')
 
   // init elements
-  const $play = $("#play");
+  const $begin = $("#start");
+  // const $pause = $("#pause")
   const $record = $("#record");
   const $body = $("body");
-  $play.attr("disabled", 1);
+  let $times = []
+  $begin.attr("disabled", 1);
+  // $pause.attr("disabled", 1)
+  
+  const $timeline = $("#line") 
 
   // Data type for storing a recording
   const recording = { events: [], startTime: -1, htmlCopy: "" };
+  const video =[]
 
   // Record each type of event
   const handlers = [
-    {
-      eventName: "mousemove",
-      handler: function handleMouseMove(e) {
-        recording.events.push({
-          type: "mousemove",
-          x: e.pageX,
-          y: e.pageY,
-          time: Date.now()
-        });
-      }
-    },
-    {
-      eventName: "click",
-      handler: function handleClick(e) {
-        recording.events.push({
-          type: "click",
-          target: e.target,
-          x: e.pageX,
-          y: e.pageY,
-          time: Date.now()
-        });
-      }
-    },
+    // {
+    //   eventName: "mousemove",
+    //   handler: function handleMouseMove(e) {
+    //     recording.events.push({
+    //       type: "mousemove",
+    //       x: e.pageX,
+    //       y: e.pageY,
+    //       time: Date.now()
+    //     });
+    //   }
+    // },
+    // {
+    //   eventName: "click",
+    //   handler: function handleClick(e) {
+    //     recording.events.push({
+    //       type: "click",
+    //       target: e.target,
+    //       x: e.pageX,
+    //       y: e.pageY,
+    //       time: Date.now()
+    //     });
+    //   }
+    // },
     {
       eventName: "keypress",
       handler: function handleKeyPress(e) {
@@ -70,25 +69,28 @@ $(function() {
     function startRecording() {
       // start recording
       $record.text("Recording (Click again to Stop)");
-      $play.attr("disabled", 1);
+      $begin.attr("disabled", 1);
       recording.startTime = Date.now();
       recording.events = [];
-      recording.htmlCopy = $(document.documentElement).html();
+      recording.htmlCopy = $(document.documentElement).html(); // There is something here, change from html to the wanted div
       recording.height = $(window).height();
       recording.width = $(window).width();
       handlers.map(x => listen(x.eventName, x.handler));
     },
     function stopRecording() {
       // stop recording
+      recording.stopTime = Date.now()
       $record.text("Record");
-      $play.removeAttr("disabled");
+      $begin.removeAttr("disabled");
       handlers.map(x => removeListener(x.eventName, x.handler));
+      video.push(recording)
     }
   );
 
   // Replay
-  $play.click(function() {
+  $begin.click(function() {
     // init iframe set scale
+    SPEED = 1
     const $iframe = $("<iframe>");
     $iframe.height(recording.height * REPLAY_SCALE);
     $iframe.width(recording.width * REPLAY_SCALE);
@@ -103,16 +105,65 @@ $(function() {
     });
     $body.append($iframe);
 
+    
+
     // Load HTML
     $iframe[0].contentDocument.documentElement.innerHTML = recording.htmlCopy;
     const $iframeDoc = $($iframe[0].contentDocument.documentElement);
 
+
     // Insert fake cursor
     const $fakeCursor = $('<div class="cursor"></div>');
-    $iframeDoc.find("body").append($fakeCursor);
+    let $seek = $('<input id="dur" type="range" name="rng" min="0" step="0.25"   value="0" style="width: 248px">')
+    let $vents = recording.events
 
+    for(let i=0; i<$vents.length; i++){
+      $times.push($vents[i].time)
+      // let $iframeDoc.currentTime = i
+    }
+    // console
+    console.log(recording.events)
+    // console
+    console.log($times)
+
+    function mDur(){
+      let $dope = $drip[drip.length - 1]
+      $seek.max = $dope.time
+    }
+    function mPlay(){
+      $seek.value = $iframeDoc.currentTime
+    }
+    function mSet(){
+      $iframeDoc.currentTime = $seek.value
+    }
+    
+    const $pause = $('<button id="pause" color="red">Pause</button>')
+    const $play = $('<button id="pause" color="red">Play</button>')
+
+
+    // $iframeDoc.find("body").append($fakeCursor);
+    $iframeDoc.find("body").append($seek);
+    $iframeDoc.find("body").append($pause)
+    $iframeDoc.find("body").append($play)
+
+    $pause.click(function() {
+      SPEED -= 1
+    })
+
+    // $iframeDoc.click(function(){
+    //   SPEED = -1
+    // })
+    
+
+    $play.click(function() {
+      SPEED += 1
+    })
+    // $pause.removeAttr("disabled");
     let i = 0;
     const startPlay = Date.now();
+
+    
+
 
     (function draw() {
       let event = recording.events[i];
@@ -120,19 +171,22 @@ $(function() {
         return;
       }
       let offsetRecording = event.time - recording.startTime;
-      let offsetPlay = (Date.now() - startPlay) * SPEED;
+      let offsetPlay = (Date.now() - startPlay) * SPEED; 
       if (offsetPlay >= offsetRecording) {
         drawEvent(event, $fakeCursor, $iframeDoc);
         i++;
       }
-
+      // console// 
+      console.log(recording.stopTime, recording.startTime)
+      
       if (i < recording.events.length) {
         requestAnimationFrame(draw);
       } else {
-        $iframe.remove();
+        $iframe.SPEED == 0;
       }
     })();
   });
+
 
   function drawEvent(event, $fakeCursor, $iframeDoc) {
     if (event.type === "click" || event.type === "mousemove") {
